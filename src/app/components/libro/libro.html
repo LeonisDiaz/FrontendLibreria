@@ -1,0 +1,164 @@
+<div class="min-h-screen bg-gray-900 text-yellow-400">
+  <div class="container mx-auto max-w-3xl px-4 py-10">
+    <a
+      routerLink="/lists"
+      class="mb-8 inline-flex items-center gap-2 text-sm text-yellow-300/90 hover:text-yellow-200 transition-colors">
+      ← Volver a la lista
+    </a>
+
+    @if (isLoadingLibro()) {
+      <div class="flex justify-center items-center py-24">
+        <div class="rounded-2xl bg-gray-800/60 px-6 py-4 ring-1 ring-yellow-400/20">
+          <span class="mr-3 inline-block h-4 w-4 animate-spin rounded-full border-2 border-yellow-400 border-t-transparent"></span>
+          <span class="align-middle text-lg">Cargando libro…</span>
+        </div>
+      </div>
+    } @else if (hasError()) {
+      <div class="rounded-2xl border border-dashed border-red-400/30 bg-gray-800/40 p-10 text-center">
+        <p class="text-red-400">❌ No se pudo cargar el libro.</p>
+        <a
+          routerLink="/lists"
+          class="mt-6 inline-block rounded-xl bg-yellow-600 px-5 py-2 font-semibold text-gray-900 hover:bg-yellow-500 transition-all">
+          Volver
+        </a>
+      </div>
+    } @else if (notFound()) {
+      <div class="rounded-2xl border border-dashed border-yellow-400/30 bg-gray-800/40 p-10 text-center">
+        <p class="text-gray-400">📕 Libro no encontrado.</p>
+        <a
+          routerLink="/lists"
+          class="mt-6 inline-block rounded-xl bg-yellow-600 px-5 py-2 font-semibold text-gray-900 hover:bg-yellow-500 transition-all">
+          Ir al catálogo
+        </a>
+      </div>
+    } @else {
+      @if (libro(); as l) {
+        @if (modoEdicion()) {
+          <div class="overflow-hidden rounded-2xl bg-gray-800 ring-1 ring-yellow-400/10 shadow-2xl">
+            <div class="h-2 w-full bg-gradient-to-r from-yellow-700 via-yellow-600 to-yellow-500"></div>
+            <div class="border-b border-yellow-400/10 bg-gray-800/60 px-6 py-4 md:px-8">
+              <h2 class="text-xl font-semibold text-yellow-200">✏️ Editar libro</h2>
+              <p class="text-sm text-gray-400">Modifica los datos y guarda los cambios</p>
+            </div>
+            <div class="p-6 md:p-8">
+              <form (ngSubmit)="guardarCambios(editForm)" #editForm="ngForm" class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <label class="block sm:col-span-2">
+                  <span class="text-xs uppercase text-gray-400">Título del libro</span>
+                  <input
+                    [(ngModel)]="libroEdicion.titulo" name="titulo" required
+                    class="mt-1 w-full rounded-xl bg-gray-700 px-4 py-2.5 text-yellow-300 ring-1 ring-yellow-400/20 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
+                    placeholder="Título">
+                </label>
+                <label class="block">
+                  <span class="text-xs uppercase text-gray-400">Autor</span>
+                  <input
+                    [(ngModel)]="libroEdicion.autor" name="autor" required
+                    class="mt-1 w-full rounded-xl bg-gray-700 px-4 py-2.5 text-yellow-300 ring-1 ring-yellow-400/20 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
+                    placeholder="Autor">
+                </label>
+                <label class="block">
+                  <span class="text-xs uppercase text-gray-400">Año de publicación</span>
+                  <input
+                    [(ngModel)]="libroEdicion.apublicacion" name="apublicacion" required
+                    class="mt-1 w-full rounded-xl bg-gray-700 px-4 py-2.5 text-yellow-300 ring-1 ring-yellow-400/20 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
+                    placeholder="YYYY">
+                </label>
+                <label class="block">
+                  <span class="text-xs uppercase text-gray-400">Editorial</span>
+                  <input
+                    [(ngModel)]="libroEdicion.editorial" name="editorial" required
+                    class="mt-1 w-full rounded-xl bg-gray-700 px-4 py-2.5 text-yellow-300 ring-1 ring-yellow-400/20 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
+                    placeholder="Editorial">
+                </label>
+                <label class="block">
+                  <span class="text-xs uppercase text-gray-400">Categoría</span>
+                  <input
+                    [(ngModel)]="libroEdicion.categoria" name="categoria" required
+                    class="mt-1 w-full rounded-xl bg-gray-700 px-4 py-2.5 text-yellow-300 ring-1 ring-yellow-400/20 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
+                    placeholder="Categoría">
+                </label>
+                <label class="block">
+                  <span class="text-xs uppercase text-gray-400">Sede</span>
+                  <input
+                    [(ngModel)]="libroEdicion.sede" name="sede" required
+                    class="mt-1 w-full rounded-xl bg-gray-700 px-4 py-2.5 text-yellow-300 ring-1 ring-yellow-400/20 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
+                    placeholder="Sede">
+                </label>
+
+                @if (errorEdicion()) {
+                  <div class="sm:col-span-2 rounded-lg bg-red-900/50 p-4 ring-1 ring-red-500/30">
+                    <p class="text-sm text-red-300">{{ errorEdicion() }}</p>
+                  </div>
+                }
+
+                <div class="sm:col-span-2 flex flex-wrap gap-3 pt-2">
+                  <button
+                    type="submit"
+                    [disabled]="!editForm.form.valid || guardando()"
+                    class="inline-flex items-center gap-2 rounded-xl bg-yellow-500 px-6 py-3 font-semibold text-gray-900 hover:bg-yellow-400 disabled:bg-gray-600 transition-all">
+                    @if (guardando()) { 🔄 Guardando… } @else { 💾 Guardar cambios }
+                  </button>
+                  <button
+                    type="button"
+                    (click)="cancelarEdicion()"
+                    [disabled]="guardando()"
+                    class="inline-flex items-center gap-2 rounded-xl border border-yellow-500/30 bg-gray-800 px-6 py-3 text-yellow-300 hover:bg-gray-700 hover:border-yellow-500/50 disabled:opacity-50 transition-all">
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        } @else {
+          <article class="overflow-hidden rounded-2xl bg-gray-800 ring-1 ring-yellow-400/10 shadow-2xl">
+            <div class="h-2 w-full bg-gradient-to-r from-yellow-700 via-yellow-600 to-yellow-500"></div>
+            <div class="p-8 md:p-10">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h1 class="text-3xl font-extrabold text-yellow-200 tracking-tight">{{ l.titulo }}</h1>
+                  <p class="mt-2 text-lg text-gray-300"><span class="text-yellow-400">✍️ Autor:</span> {{ l.autor }}</p>
+                </div>
+                <button
+                  type="button"
+                  (click)="entrarEdicion()"
+                  class="shrink-0 rounded-xl bg-yellow-600 px-5 py-2.5 font-semibold text-gray-900 hover:bg-yellow-500 transition-all">
+                  ✏️ Editar
+                </button>
+              </div>
+
+              <dl class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="rounded-xl bg-gray-700/50 px-4 py-3 ring-1 ring-yellow-400/10">
+                  <dt class="text-xs uppercase text-gray-400">Año</dt>
+                  <dd class="mt-1 text-yellow-200">{{ l.apublicacion }}</dd>
+                </div>
+                <div class="rounded-xl bg-gray-700/50 px-4 py-3 ring-1 ring-yellow-400/10">
+                  <dt class="text-xs uppercase text-gray-400">Editorial</dt>
+                  <dd class="mt-1 text-yellow-200">{{ l.editorial }}</dd>
+                </div>
+                <div class="rounded-xl bg-gray-700/50 px-4 py-3 ring-1 ring-yellow-400/10">
+                  <dt class="text-xs uppercase text-gray-400">Categoría</dt>
+                  <dd class="mt-1 text-yellow-200">{{ l.categoria }}</dd>
+                </div>
+                <div class="rounded-xl bg-gray-700/50 px-4 py-3 ring-1 ring-yellow-400/10">
+                  <dt class="text-xs uppercase text-gray-400">Sede</dt>
+                  <dd class="mt-1 text-yellow-200">{{ l.sede }}</dd>
+                </div>
+              </dl>
+
+              @if (l.createdAt) {
+                <p class="mt-8 text-sm text-gray-400">
+                  <span class="text-yellow-400">📅 Registrado:</span> {{ formatDate(l.createdAt) }}
+                </p>
+              }
+              @if (l.updatedAt && l.updatedAt !== l.createdAt) {
+                <p class="mt-1 text-sm text-gray-400">
+                  <span class="text-yellow-400">🔄 Actualizado:</span> {{ formatDate(l.updatedAt) }}
+                </p>
+              }
+            </div>
+          </article>
+        }
+      }
+    }
+  </div>
+</div>
