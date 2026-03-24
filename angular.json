@@ -41,7 +41,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "outputPath":"dist/biblioteca"
             },
             "development": {
               "optimization": false,
