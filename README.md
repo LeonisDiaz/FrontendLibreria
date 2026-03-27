@@ -1,7 +1,7 @@
 # Biblioteca
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.3.
-and is deployed at [https://frontendlibreria.onrender.com/lists](https://frontendlibreria.onrender.com/lists)
+and is deployed at [https://frontendlibreria.onrender.com](https://frontendlibreria.onrender.com)
 
 ## Development server
 
